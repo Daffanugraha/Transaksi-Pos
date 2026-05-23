@@ -1,0 +1,22 @@
+<div class="kpi-grid">
+    <div class="kpi-card" style="--gradient: linear-gradient(90deg, #00D4FF, #7C3AED)">
+        <div class="kpi-label">Volume Transaksi</div>
+        <div class="kpi-value">{{ total_transactions }}</div>
+        <div class="kpi-sub">Periode: {{ date_start }} – {{ date_end }}</div>
+    </div>
+    <div class="kpi-card" style="--gradient: linear-gradient(90deg, #00C896, #00D4FF)">
+        <div class="kpi-label">Pendapatan Bruto</div>
+        <div class="kpi-value" style="font-size:1.45rem">Rp {{ total_revenue }}</div>
+        <div class="kpi-sub">Rata-rata belanja: Rp {{ avg_transaction }} / struk</div>
+    </div>
+    <div class="kpi-card" style="--gradient: linear-gradient(90deg, #FF3B6E, #FF6B35)">
+        <div class="kpi-label">Perlu Verifikasi</div>
+        <div class="kpi-value" style="color:#FF3B6E">{{ anomaly_count }}</div>
+        <div class="kpi-sub">{{ anomaly_rate }}% dari total volume</div>
+    </div>
+    <div class="kpi-card" style="--gradient: linear-gradient(90deg, #FFD60A, #FF6B35)">
+        <div class="kpi-label">Staf Kasir Aktif</div>
+        <div class="kpi-value" style="color:#FFD60A">{{ num_cashiers }}</div>
+        <div class="kpi-sub">{{ num_products }} item dalam katalog</div>
+    </div>
+</div>

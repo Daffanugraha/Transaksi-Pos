@@ -1,0 +1,16 @@
+<div style="overflow-x:auto;border-radius:12px;border:1px solid rgba(255,255,255,0.07)">
+    <table class="anomaly-table">
+        <thead>
+            <tr>
+                <th>ID</th><th>Tanggal</th><th>Kasir</th><th>Produk</th>
+                <th>Nilai</th><th>Severity</th><th>Jenis Anomali</th><th>Keterangan</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ rows_html }}
+        </tbody>
+    </table>
+</div>
+<p style="color:#64748B;font-size:0.75rem;margin-top:0.5rem">
+    Menampilkan {{ filtered_count }} dari {{ total_count }} anomali
+</p>

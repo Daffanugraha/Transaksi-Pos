@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── Root variables ─────────────────────── */
+:root {
+    --bg:       #060B14;
+    --surface:  #0D1424;
+    --card:     #111827;
+    --border:   rgba(255, 255, 255, 0.07);
+    --primary:  #00D4FF;
+    --accent:   #7C3AED;
+    --danger:   #FF3B6E;
+    --warn:     #FFD60A;
+    --success:  #00C896;
+    --text:     #E2E8F0;
+    --muted:    #64748B;
+}
+
+/* ─── Global resets ──────────────────────── */
+html, 
+body, 
+[class*="css"] {
+    font-family: 'DM Sans', sans-serif !important;
+    color: var(--text) !important;
+}
+
+.main { 
+    background: var(--bg) !important; 
+}
+
+.block-container { 
+    padding: 2rem 2rem 4rem !important; 
+    max-width: 1600px !important; 
+}
+
+section[data-testid="stSidebar"] { 
+    background: var(--surface) !important; 
+    border-right: 1px solid var(--border) !important; 
+}
+
+section[data-testid="stSidebar"] * { 
+    color: var(--text) !important; 
+}
+
+/* ─── Header ─────────────────────────────── */
+.pos-header {
+    display: flex; 
+    align-items: center; 
+    gap: 1.2rem;
+    padding: 2rem 0 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+}
+
+.pos-logo {
+    width: 52px; 
+    height: 52px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 14px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-size: 24px; 
+    box-shadow: 0 0 24px rgba(0, 212, 255, 0.3);
+}
+
+.pos-title { 
+    font-family: 'Space Grotesk', sans-serif !important; 
+}
+
+.pos-title h1 {
+    font-size: 1.9rem; 
+    font-weight: 700; 
+    margin: 0;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.pos-title p { 
+    font-size: 0.85rem; 
+    color: var(--muted); 
+    margin: 0.2rem 0 0; 
+}
+
+/* ─── KPI cards ──────────────────────────── */
+.kpi-grid { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 1rem; 
+    margin-bottom: 2rem; 
+}
+
+.kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem 1.4rem;
+    position: relative; 
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.kpi-card:hover { 
+    transform: translateY(-2px); 
+}
+
+.kpi-card::before {
+    content: ''; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    height: 3px;
+    background: var(--gradient, linear-gradient(90deg, var(--primary), var(--accent)));
+}
+
+.kpi-icon { 
+    font-size: 1.5rem; 
+    margin-bottom: 0.5rem; 
+}
+
+.kpi-label { 
+    font-size: 0.72rem; 
+    color: var(--muted); 
+    text-transform: uppercase; 
+    letter-spacing: 0.08em; 
+    font-weight: 600; 
+}
+
+.kpi-value { 
+    font-family: 'Space Grotesk', sans-serif !important; 
+    font-size: 1.75rem; 
+    font-weight: 700; 
+    color: var(--primary); 
+    line-height: 1.1; 
+}
+
+.kpi-sub { 
+    font-size: 0.75rem; 
+    color: var(--muted); 
+    margin-top: 0.3rem; 
+}
+
+/* ─── Chart cards ────────────────────────── */
+.chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.25rem;
+}
+
+/* ─── Anomaly table ──────────────────────── */
+.anomaly-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 0.82rem; 
+}
+
+.anomaly-table th {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.65rem 1rem;
+    text-align: left; 
+    font-weight: 600; 
+    color: var(--muted);
+    text-transform: uppercase; 
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+}
+
+.anomaly-table td { 
+    padding: 0.75rem 1rem; 
+    border-bottom: 1px solid var(--border); 
+}
+
+.anomaly-table tr:hover td { 
+    background: rgba(255, 255, 255, 0.02); 
+}
+
+/* ─── Badges ─────────────────────────────── */
+.badge {
+    display: inline-block; 
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px; 
+    font-size: 0.7rem; 
+    font-weight: 700;
+    letter-spacing: 0.05em; 
+    text-transform: uppercase;
+}
+
+.badge-critical { 
+    background: rgba(255, 59, 110, 0.15); 
+    color: #FF3B6E; 
+    border: 1px solid rgba(255, 59, 110, 0.3); 
+}
+
+.badge-high { 
+    background: rgba(255, 107, 53, 0.15); 
+    color: #FF6B35; 
+    border: 1px solid rgba(255, 107, 53, 0.3); 
+}
+
+.badge-medium { 
+    background: rgba(255, 214, 10, 0.15); 
+    color: #FFD60A; 
+    border: 1px solid rgba(255, 214, 10, 0.3); 
+}
+
+.badge-low { 
+    background: rgba(0, 200, 150, 0.15);  
+    color: #00C896; 
+    border: 1px solid rgba(0, 200, 150, 0.3); 
+}
+
+.badge-normal { 
+    background: rgba(100, 116, 139, 0.15);
+    color: #94A3B8; 
+    border: 1px solid rgba(100, 116, 139, 0.3); 
+}
+
+.ai-box {
+    background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(0,212,255,0.07));
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 16px; padding: 1.5rem;
+    font-size: 0.9rem; line-height: 1.7;
+    white-space: pre-wrap;
+}
+.ai-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.9rem 1.2rem; margin-bottom: 1rem;
+    background: rgba(124,58,237,0.12);
+    border-radius: 10px; border: 1px solid rgba(124,58,237,0.2);
+}
+
+
+.section-title {
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 1.05rem; font-weight: 700; color: var(--text);
+    margin: 1.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.stButton > button {
+    background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
+    color: #000 !important; font-weight: 700 !important;
+    border: none !important; border-radius: 10px !important;
+    padding: 0.6rem 1.4rem !important;
+    transition: opacity 0.2s !important;
+}
+
+.stButton > button:hover { 
+    opacity: 0.88 !important; 
+}
+
+.stFileUploader { 
+    background: var(--card) !important; 
+    border-radius: 12px !important; 
+}
+
+div[data-testid="stMetric"] { 
+    background: var(--card); 
+    border-radius: 12px; 
+    padding: 1rem; 
+}
+
+.stTabs [data-baseweb="tab-list"] { 
+    background: var(--surface) !important; 
+    border-radius: 10px !important; 
+    gap: 4px !important; 
+    padding: 4px !important; 
+}
+
+.stTabs [data-baseweb="tab"] { 
+    border-radius: 8px !important; 
+    color: var(--muted) !important; 
+    font-weight: 500 !important; 
+}
+
+.stTabs [aria-selected="true"] { 
+    background: var(--card) !important; 
+    color: var(--primary) !important; 
+}
+
+.stSelectbox > div > div { 
+    background: var(--card) !important; 
+    border-color: var(--border) !important; 
+}
+
+.stSlider { 
+    color: var(--primary) !important; 
+}
+.stTextInput > div > input,
+.stPasswordInput > div > input { 
+    background: var(--card) !important; 
+    border-color: var(--border) !important; 
+    color: var(--text) !important; 
+}
+
+.stCheckbox label { 
+    color: var(--text) !important; 
+}
+
+.stAlert { 
+    border-radius: 10px !important; 
+}
+
+div[data-testid="stDataFrame"] { 
+    border-radius: 12px !important; 
+}
