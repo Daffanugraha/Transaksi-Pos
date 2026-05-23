@@ -7,6 +7,14 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from typing import Tuple
+import os
+import streamlit as st
+
+# Pastikan file column_mapper.py sudah Anda buat di dalam folder components
+try:
+    from components.column_mapper import map_columns_with_ai
+except ImportError:
+    map_columns_with_ai = None
 
 
 REQUIRED_COLUMNS = [
@@ -20,29 +28,73 @@ OPTIONAL_COLUMNS = [
 ]
 
 
+def standardize_columns_basic(df: pd.DataFrame) -> pd.DataFrame:
+    """Membersihkan spasi dan memetakan nama kolom umum ke standar sistem."""
+    df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
+    
+    # Kamus alias cepat (menghemat pemanggilan API)
+    mapping = {
+        "date": ["tanggal", "waktu", "transaction_date", "waktu_transaksi", "tgl", "datetime"],
+        "transaction_id": ["id_transaksi", "trans_id", "order_id", "invoice", "receipt_id", "id", "no_nota"],
+        "total_amount": ["total", "amount", "grand_total", "total_pembayaran", "nilai_transaksi", "revenue", "omset"],
+        "cashier_id": ["id_kasir", "user_id", "staff_id"],
+        "cashier_name": ["nama_kasir", "kasir", "staff_name", "user_name", "operator"],
+        "product_name": ["nama_produk", "item", "produk", "product", "barang"],
+        "category": ["kategori", "jenis_produk", "department", "kategori_produk", "jenis"],
+        "quantity": ["qty", "jumlah", "jml", "kuantitas"],
+        "unit_price": ["harga", "harga_satuan", "price", "harga_jual"]
+    }
+    
+    rename_dict = {}
+    for standard_name, aliases in mapping.items():
+        for col in df.columns:
+            if col in aliases and standard_name not in df.columns:
+                rename_dict[col] = standard_name
+                
+    return df.rename(columns=rename_dict)
+
+
 def load_csv(file) -> Tuple[pd.DataFrame, list]:
     """Load CSV file and return DataFrame with validation messages."""
     messages = []
     try:
         df = pd.read_csv(file)
-        messages.append(f"✅ Berhasil memuat {len(df)} transaksi.")
+        
+        # Lakukan pemetaan dasar terlebih dahulu
+        df = standardize_columns_basic(df)
+        
+        messages.append(f"Berhasil memuat {len(df)} baris data.")
     except Exception as e:
-        return pd.DataFrame(), [f"❌ Gagal membaca file: {e}"]
+        return pd.DataFrame(), [f"Gagal membaca dokumen: {e}"]
 
-    # Normalize column names
-    df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
-
-    # Check required columns
-    missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
-    if missing:
-        return df, [f"⚠️ Kolom wajib tidak ditemukan: {missing}"]
-
+    # Pengecekan kolom wajib ditiadakan di sini, dipindah ke preprocess agar AI bisa bekerja dulu
     return df, messages
 
 
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
-    """Clean and enrich the dataframe."""
+    """Clean and enrich the dataframe, applying AI column mapping if needed."""
     df = df.copy()
+
+    # 1. Cek apakah kolom wajib masih ada yang kurang
+    missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
+    
+    # 2. Jika ada yang kurang, panggil modul pemetaan cerdas
+    if missing and map_columns_with_ai is not None:
+        groq_api_key = os.environ.get("GROQ_API_KEY", "")
+        if groq_api_key:
+            with st.spinner("Sistem sedang menganalisis dan menyesuaikan struktur kolom Anda..."):
+                ai_mapping = map_columns_with_ai(list(df.columns), groq_api_key)
+                if ai_mapping:
+                    df = df.rename(columns=ai_mapping)
+        else:
+            # Tidak menghentikan proses, hanya memberitahu
+            st.info("Kunci Sistem tidak terdeteksi. Sistem menggunakan pemetaan kolom standar.")
+
+    # 3. Validasi Akhir: Jika setelah dibantu AI masih gagal, hentikan proses
+    missing_after = [col for col in REQUIRED_COLUMNS if col not in df.columns]
+    if missing_after:
+        st.error(f"Sistem tidak dapat mengidentifikasi kolom data berikut: {', '.join(missing_after)}. Pastikan dokumen yang diunggah adalah rekap transaksi yang valid.")
+        st.stop() # Menghentikan eksekusi Streamlit di titik ini agar tidak memicu error sistem (KeyError)
 
     # Parse date
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
@@ -61,9 +113,12 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
             df.loc[mask, "time"].astype(str), format="%H:%M", errors="coerce"
         ).dt.hour
 
-    # Numeric coercion
+    # Numeric coercion (Aman dari string seperti "Rp" atau ",")
     for col in ["total_amount", "quantity", "unit_price", "discount_percent"]:
         if col in df.columns:
+            if df[col].dtype == object:
+                # Membuang karakter selain angka dan titik desimal
+                df[col] = df[col].astype(str).str.replace(r'[^\d.]', '', regex=True)
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
     # Boolean void flag
